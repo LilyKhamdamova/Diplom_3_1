@@ -1,7 +1,6 @@
 package APIInformation;
 
 
-import UserClient.UserHelper;
 import org.junit.rules.ExternalResource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,7 +14,6 @@ public class DriverFactory extends ExternalResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverFactory.class);
     private WebDriver driver;
-    public String accessToken;
 
     public WebDriver getDriver() {
         return driver;
@@ -35,18 +33,20 @@ public class DriverFactory extends ExternalResource {
 
     private void initYandex() {
 
-        WebDriverManager.chromedriver().driverVersion("122.0.6261.128").setup();
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("/Applications/Yandex.app/Contents/MacOS/Yandex");
+        WebDriverManager.chromedriver().driverVersion(System.getProperty("driver.version")).setup();
+
+        var options = new ChromeOptions();
+        options.setBinary(System.getProperty("webdriver.yandex.bin"));
+
         driver = new ChromeDriver(options);
         LOGGER.info("Initialized Yandex Browser Driver");
     }
 
 
-    public void initDriver(String browser) {
-        if ("firefox".equals(browser)) {
+    public void initDriver() {
+        if ("firefox".equals(System.getProperty("browser"))) {
             initFirefox();
-        } else if ("yandex".equals(browser)) {
+        } else if ("yandex".equals(System.getProperty("browser"))) {
             initYandex();
         } else {
             initChrome();
@@ -55,8 +55,8 @@ public class DriverFactory extends ExternalResource {
 
 
     @Override
-    protected void before() throws Throwable {
-        initDriver(System.getProperty("browser"));
+    protected void before() {
+        initDriver();
         LOGGER.info("Driver initialized for browser");
     }
 

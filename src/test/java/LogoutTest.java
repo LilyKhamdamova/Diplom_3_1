@@ -5,14 +5,10 @@ import UIObjects.ButtonClass;
 import UserClient.UserCredentials;
 import UserClient.UserHelper;
 import io.restassured.response.Response;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 
 public class LogoutTest
@@ -29,11 +25,7 @@ public class LogoutTest
 
     @Test
     public void validLogoutTest() {
-        // Установка системного свойства для использования Яндекс Браузера
-        System.setProperty("browser", "yandex");
 
-        // Инициализация драйвера через фабрику
-        driverFactory.initDriver(System.getProperty("browser"));
         driver = driverFactory.getDriver();
         buttonClass = new ButtonClass();
         LoginHelper loginHelper = new LoginHelper(driver, buttonClass);
@@ -50,21 +42,26 @@ public class LogoutTest
         var userPassword = registrationCredentials.getPassword();
 
         driver.get(APIInformation.Addresses.BASE_URI);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(150));
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(buttonClass.loader));
-        wait.until(ExpectedConditions.elementToBeClickable(buttonClass.personalAccountButton));
+        loginHelper.waitForElementInvisibility(buttonClass.loader,
+                "Дождаться, что пропал загрузчик");
+        loginHelper.waitForElementVisibility(buttonClass.personalAccountButton,
+                "Появилась кнопка 'Личный Кабинет'");
         loginHelper.clickButton(buttonClass.personalAccountButton);
         loginHelper.clickButton(buttonClass.registrationButton);
         loginHelper.clickButton(buttonClass.enterButton);
         loginHelper.loginUser(userEmail, userPassword);
-        loginHelper.waitForElementVisibility(buttonClass.makeOrderButton, "Кнопка 'Оформить заказ' появилась после успешного входа");
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.personalAccountButton));
+        loginHelper.waitForElementVisibility(buttonClass.makeOrderButton,
+                "Кнопка 'Оформить заказ' появилась после успешного входа");
+        loginHelper.waitForElementVisibility(buttonClass.personalAccountButton,
+                "Появилась кнопка 'Личный Кабинет'");
         loginHelper.clickButton(buttonClass.personalAccountButton);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.logOutButton));
+        loginHelper.waitForElementVisibility(buttonClass.logOutButton,
+                "Кнопка 'Выйти' появилась");
         loginHelper.clickButton(buttonClass.logOutButton);
-        // Проверка, что после входа появляется кнопка "Личный кабинет"
-        registrationClient.waitForElementVisibility(buttonClass.saveButton, "Кнопка 'Войти' появилась после успешного выхода" );
+        registrationClient.waitForElementVisibility(buttonClass.confirmButton, "Кнопка 'Войти' появилась после успешного выхода" );
+    }
+    @After
+    public void tearDown() {
         if (accessToken != null && !accessToken.isEmpty()) {
             UserHelper.deleteUserInformation(accessToken);
         }

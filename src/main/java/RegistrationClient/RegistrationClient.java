@@ -12,7 +12,6 @@ import java.time.Duration;
 
 public class RegistrationClient {
 
-    protected String accessToken;
     protected UserCredentials registrationCredentials;
     private WebDriver driver;
     private ButtonClass buttonClass;
@@ -35,7 +34,7 @@ public class RegistrationClient {
         driver.findElement(buttonClass.userNameInput).sendKeys(userName);
         driver.findElement(buttonClass.userEmailInput).sendKeys(userEmail);
         driver.findElement(buttonClass.userPasswordInput).sendKeys(passwordValid);
-        driver.findElement(buttonClass.confirmButton).click();
+        driver.findElement(buttonClass.getRegistrationButton).click();
     }
 
     @Step("Дождаться видимости элемента")

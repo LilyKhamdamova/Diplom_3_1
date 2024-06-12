@@ -77,10 +77,10 @@ import UIObjects.ButtonClient;
 import UserClient.UserCredentials;
 import UserClient.UserHelper;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -92,13 +92,11 @@ public class ConstructorTest {
     @Rule
     public DriverFactory driverFactory = new DriverFactory();
 
+
     @Test
     public void switchIngredientsConstructorTestSauce() {
-        // Установка системного свойства для использования Яндекс Браузера
-        System.setProperty("browser", "yandex");
 
-        // Инициализация драйвера через фабрику
-        driverFactory.initDriver(System.getProperty("browser"));
+
         WebDriver driver = driverFactory.getDriver();
         ButtonClass buttonClass = new ButtonClass();
         ButtonClient buttonClient = new ButtonClient(driver);
@@ -116,13 +114,14 @@ public class ConstructorTest {
 
         driver.get(APIInformation.Addresses.BASE_URI);
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(150));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.personalAccountButton));
+        loginHelper.waitForElementVisibility(buttonClass.personalAccountButton,
+                "Появилась кнопка 'Личный Кабинет'");
 
         loginHelper.clickButton(buttonClass.personalAccountButton);
         loginHelper.loginUser(userEmail, userPassword);
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.sauce));
+        loginHelper.waitForElementVisibility(buttonClass.sauce,
+                "Появилась надпись 'Соусы'");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(150));
 
         // Проверка перехода к разделу "Соусы"
         buttonClient.checkSwitchBetweenSection(buttonClass.sauce, wait);
@@ -132,9 +131,13 @@ public class ConstructorTest {
 
         // Проверка перехода к разделу "Булки"
         buttonClient.checkSwitchBetweenSection(buttonClass.ban, wait);
-        if (accessToken != null && !accessToken.isEmpty()) {
-        UserHelper.deleteUserInformation(accessToken);
 
+
+        }
+    @After
+    public void tearDown() {
+        if (accessToken != null && !accessToken.isEmpty()) {
+            UserHelper.deleteUserInformation(accessToken);
         }
     }
 }

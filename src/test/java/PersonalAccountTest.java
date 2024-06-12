@@ -2,21 +2,15 @@ import APIInformation.DriverFactory;
 import LoginClient.LoginHelper;
 import RegistrationClient.RegistrationClient;
 import UIObjects.ButtonClass;
-import UIObjects.ButtonClient;
 import UserClient.UserCredentials;
 import UserClient.UserHelper;
 import io.restassured.response.Response;
 
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 
-public class PersonalAccountTest  //extends BaseTest
+public class PersonalAccountTest
 {
 
     protected String accessToken;
@@ -28,15 +22,9 @@ public class PersonalAccountTest  //extends BaseTest
     @Test
     public void EnterToPersonalAccountTest() {
 
-        // Установка системного свойства для использования Яндекс Браузера
-        System.setProperty("browser", "yandex");
-
-        // Инициализация драйвера через фабрику
-        driverFactory.initDriver(System.getProperty("browser"));
         WebDriver driver = driverFactory.getDriver();
         ButtonClass buttonClass = new ButtonClass();
         LoginHelper loginHelper = new LoginHelper(driver, buttonClass);
-        RegistrationClient registrationClient = new RegistrationClient(driver, buttonClass);
 
         UserCredentials registrationCredentials = UserCredentials.random();
         Response response = UserHelper.createValidUser(registrationCredentials);
@@ -49,9 +37,8 @@ public class PersonalAccountTest  //extends BaseTest
         var userPassword = registrationCredentials.getPassword();
 
         driver.get(APIInformation.Addresses.BASE_URI);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.personalAccountButton));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.personalAccountButton));
+        loginHelper.waitForElementVisibility(buttonClass.personalAccountButton,
+                "Появилась кнопка 'Личный Кабинет'");
         driver.findElement(buttonClass.personalAccountButton).click();
         driver.findElement(buttonClass.userEmailToEnter).sendKeys(userEmail);
         driver.findElement(buttonClass.userPasswordToEnter).sendKeys(userPassword);
@@ -59,9 +46,13 @@ public class PersonalAccountTest  //extends BaseTest
         driver.findElement(buttonClass.personalAccountButton).click();
 
         // Проверка, что после входа появляется кнопка "Профиль"
-        wait.until(ExpectedConditions.visibilityOfElementLocated(buttonClass.profileSign));
+        loginHelper.waitForElementVisibility(buttonClass.profileSign,
+                "Появилась кнопка 'Профиль'");
         Assert.assertTrue("Видно надпись\"Профиль\"",
                 driver.findElement(buttonClass.profileSign).isDisplayed());
+    }
+    @After
+    public void tearDown() {
         if (accessToken != null && !accessToken.isEmpty()) {
             UserHelper.deleteUserInformation(accessToken);
         }
