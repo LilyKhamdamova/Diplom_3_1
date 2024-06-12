@@ -1,7 +1,6 @@
 import APIInformation.DriverFactory;
 import LoginClient.LoginHelper;
 import UIObjects.ButtonClass;
-import UIObjects.ButtonClient;
 import UserClient.UserCredentials;
 import UserClient.UserHelper;
 import io.restassured.response.Response;
@@ -100,7 +99,7 @@ public DriverFactory driverFactory = new DriverFactory();
         loginHelper.waitForElementInvisibility(buttonClass.loader,
                 "Дождаться, что пропал загрузчик");
         loginHelper.waitForElementVisibility(buttonClass.personalAccountButton,
-                "Появилась кнопка 'Личный Кабинет'");;
+                "Появилась кнопка 'Личный Кабинет'");
         loginHelper.clickButton(buttonClass.personalAccountButton);
         loginHelper.clickButton(buttonClass.registrationButton);
         loginHelper.clickButton(buttonClass.enterButton);

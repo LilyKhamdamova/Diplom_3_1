@@ -14,8 +14,6 @@ import org.openqa.selenium.WebDriver;
 public class LogoutTest
 
 {
-    private WebDriver driver;
-    private ButtonClass buttonClass;
     protected String accessToken;
 
 
@@ -26,10 +24,10 @@ public class LogoutTest
     @Test
     public void validLogoutTest() {
 
-        driver = driverFactory.getDriver();
-        buttonClass = new ButtonClass();
+        WebDriver driver = driverFactory.getDriver();
+        ButtonClass buttonClass = new ButtonClass();
         LoginHelper loginHelper = new LoginHelper(driver, buttonClass);
-        RegistrationClient registrationClient = new RegistrationClient(driver,buttonClass);
+        RegistrationClient registrationClient = new RegistrationClient(driver, buttonClass);
 
         UserCredentials registrationCredentials = UserCredentials.random();
         Response response = UserHelper.createValidUser(registrationCredentials);

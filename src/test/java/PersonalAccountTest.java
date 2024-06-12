@@ -1,6 +1,5 @@
 import APIInformation.DriverFactory;
 import LoginClient.LoginHelper;
-import RegistrationClient.RegistrationClient;
 import UIObjects.ButtonClass;
 import UserClient.UserCredentials;
 import UserClient.UserHelper;
