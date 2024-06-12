@@ -33,8 +33,6 @@ public class ButtonClass {
     // Поле ввода пароля
     public By userPasswordToEnter = By.xpath( "//fieldset[2]/div/div/input");
 
-    // Кнопка "Войти"
-    //public By saveButton = By.xpath( "//div/form/button");
 
     // Кнопка "Восстановить пароль"
     public By enterForgotPassword = By.xpath("//div/p[2]/a");
